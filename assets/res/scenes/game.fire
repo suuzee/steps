@@ -607,8 +607,6 @@
       "__id__": 12
     },
     "_enabled": true,
-    "label": null,
-    "text": "hello",
     "_id": "a9Sa1JcG5A3qy/TZAeAOow"
   },
   {
@@ -630,6 +628,11 @@
       "__id__": 8
     },
     "_enabled": true,
+    "fallHeight": 500,
+    "fallDuration": 0.3,
+    "initStayDuration": 2,
+    "minStayDuration": 0.3,
+    "speed": 0.1,
     "stepDistance": 200,
     "jumpHeight": 100,
     "jumpDuration": 0.3,

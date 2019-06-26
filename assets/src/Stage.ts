@@ -18,6 +18,17 @@ const {ccclass, property} = cc._decorator;
 export class Stage extends cc.Component {
 
     @property(cc.Integer)
+    private fallHeight: number = 500;
+    @property(cc.Float)
+    private fallDuration: number = 0.3;
+    @property(cc.Float)
+    private initStayDuration: number = 2;
+    @property(cc.Float)
+    private minStayDuration: number = 0.3;
+    @property(cc.Float)
+    private speed: number = 0.1;
+    private stayDuration: number;
+    @property(cc.Integer)
     private stepDistance: number = 200;
     @property(cc.Integer)
     private jumpHeight: number = 100;
@@ -39,13 +50,22 @@ export class Stage extends cc.Component {
 
     public init (game: Game) {
         this.game = game;
-        this.player.init(this.stepDistance, this.jumpHeight, this.jumpDuration);
+        this.stayDuration = this.initStayDuration;
+        this.player.init(this.stepDistance, this.jumpHeight, this.jumpDuration, this.fallDuration, this.fallHeight);
 
         this.blockList = [];
         this.addBlock(cc.v2(0, 0));
         for (let i = 0; i < 5; i ++) {
             this.randomAddBlock();
         }
+    }
+
+    public addSpeed () {
+        this.stayDuration -= this.speed;
+        if (this.stayDuration <= this.minStayDuration) {
+            this.stayDuration = this.minStayDuration;
+        }
+        cc.log(this.stayDuration);
     }
 
     public playerJump(step: number) {
@@ -56,9 +76,23 @@ export class Stage extends cc.Component {
 
             if (isDead) {
                 cc.log('die');
-                this.game.overGame();
+                this.scheduleOnce(() => {
+                    this.player.die();
+                    this.game.overGame();
+                }, this.jumpDuration);
             } else {
+                let blockIndex = this.player.index;
+                this.blockList[blockIndex].init(this.fallDuration, this.fallHeight, this.stayDuration, () => {
+                    if (this.player.index === blockIndex) {
+                        this.player.die();
+                        this.game.overGame();
+                    }
+                });
                 this.game.addScore(step === 1 ? 1 : 3);
+            }
+
+            if (this.player.index % 10 === 0) {
+                this.addSpeed();
             }
         }
     }

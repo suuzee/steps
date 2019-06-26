@@ -16,14 +16,19 @@ export class Player extends cc.Component {
     private stepDistance: number;
     private jumpHeight: number;
     private jumpDuration: number;
+    private fallDuration: number;
+    private fallHeight: number;
     public canJump: boolean;
     public index: number;
 
-    public init (stepDistance: number, jumpHeight: number, jumpDuration: number) {
+    public init (stepDistance: number, jumpHeight: number, jumpDuration: number, fallDuration: number, fallHeight: number) {
         this.stepDistance = stepDistance;
         this.jumpHeight = jumpHeight;
         this.jumpDuration = jumpDuration;
+        this.fallDuration = fallDuration;
+        this.fallHeight = fallHeight;
         this.canJump = true;
+        this.index = 0;
     }
 
     public jump (step: number) {
@@ -40,6 +45,9 @@ export class Player extends cc.Component {
     }
 
     public die () {
+        this.canJump = false;
+        let dieAction = cc.moveBy(this.fallDuration, cc.v2(0, -this.fallHeight));
+        this.node.runAction(dieAction);
         cc.log('我死了')
     }
 
