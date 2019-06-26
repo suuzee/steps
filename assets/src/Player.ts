@@ -13,6 +13,19 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export class Player extends cc.Component {
 
+    @property({
+        type: cc.AudioClip
+    })
+    private oneStepAudio: cc.AudioClip = null;
+    @property({
+        type: cc.AudioClip
+    })
+    private twoStepAudio: cc.AudioClip = null;
+    @property({
+        type: cc.AudioClip
+    })
+    private dieAudio: cc.AudioClip = null;
+
     private stepDistance: number;
     private jumpHeight: number;
     private jumpDuration: number;
@@ -41,6 +54,13 @@ export class Player extends cc.Component {
         });
 
         this.node.runAction(cc.sequence(jumpAction, finishAction));
+
+        if (step === 1) {
+            cc.audioEngine.play(this.oneStepAudio, false, 1);
+        } else if (step === 2) {
+            cc.audioEngine.play(this.twoStepAudio, false, 1);
+        }
+
         cc.log(`我跳了${step}步`);
     }
 
@@ -48,7 +68,9 @@ export class Player extends cc.Component {
         this.canJump = false;
         let dieAction = cc.moveBy(this.fallDuration, cc.v2(0, -this.fallHeight));
         this.node.runAction(dieAction);
-        cc.log('我死了')
+
+        cc.audioEngine.play(this.dieAudio, false, 1);
+        cc.log('我死了');
     }
 
 }

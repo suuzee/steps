@@ -8,13 +8,37 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const {ccclass} = cc._decorator;
+import { Game } from "./Game";
+
+const { ccclass, property } = cc._decorator;
 
 @ccclass
-export class Menu extends cc.Component {
+export class OverPanel extends cc.Component {
 
-    private onBtnStart () {
-        cc.director.loadScene('game');
+    @property(cc.Label)
+    private scoreLabel: cc.Label = null;
+
+    private game: Game;
+
+    public init(game: Game) {
+        this.game = game;
     }
-    
+
+    private onBtnRestart() {
+        this.game.restartGame();
+    }
+
+    private onBtnReturnMenu() {
+        this.game.returnMenu();
+    }
+
+    public show(score: number) {
+        this.node.active = true;
+        this.scoreLabel.string = score + '';
+    }
+
+    public hide() {
+        this.node.active = false;
+    }
+
 }
